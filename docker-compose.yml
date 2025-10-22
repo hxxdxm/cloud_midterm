@@ -6,12 +6,16 @@ services:
     volumes:
       - ./data:/app/data
     # 필요시 헬스체크 추가
-    # expose:
-    #   - "5000"
+    expose:
+      - "5000"
 
   web:
     image: nginx:1.25
     # api가 준비된 뒤 시작하도록 depends_on/healthcheck 구성 가능
+    container_name: web
+    depends_on:
+      api:
+        condition: service_healthy
     ports:
       - "8080:8080"
     volumes:

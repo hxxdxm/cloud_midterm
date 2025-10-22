@@ -74,4 +74,4 @@ def download_json():
 
 if __name__ == "__main__":
     # 적절한 포트(예: 5000)로 0.0.0.0 에서 실행
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5001)
