@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Height/Weight Tracker — 문제 틀</title>
+    <style>
+      body{font-family:system-ui,Arial;margin:40px;line-height:1.6}
+      form{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+      input{padding:6px 10px}
+      button{padding:6px 12px;cursor:pointer}
+      pre{background:#f6f8fa;padding:12px;border-radius:8px;overflow:auto}
+      label{display:flex;gap:6px;align-items:center}
+    </style>
+  </head>
+  <body>
+    <h1>키/몸무게 입력</h1>
+    <form id="form">
+      <label>키(cm): <input id="height" type="number" min="0" step="0.1" required></label>
+      <label>몸무게(kg): <input id="weight" type="number" min="0" step="0.1" required></label>
+      <button type="submit">저장</button>
+      <button type="button" id="downloadBtn">JSON 다운로드</button>
+    </form>
+
+    <h2>방금 입력값</h2>
+    <pre id="last"></pre>
+
+    <h2>누적 데이터</h2>
+    <pre id="list">[]</pre>
+
+    <script>
+      const form = document.getElementById('form');
+      const heightEl = document.getElementById('height');
+      const weightEl = document.getElementById('weight');
+      const listEl = document.getElementById('list');
+      const lastEl = document.getElementById('last');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      async function fetchRecords(){
+        const r = await fetch('/api/records');
+        const data = await r.json();
+        listEl.textContent = JSON.stringify(data, null, 2);
+      }
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const height = Number(heightEl.value);
+        const weight = Number(weightEl.value);
+        lastEl.textContent = JSON.stringify({height, weight}, null, 2);
+        await fetch('/api/records', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({height, weight})
+        });
+        form.reset();
+        await fetchRecords();
+      });
+
+      downloadBtn.addEventListener('click', ()=>{
+        // /api/download 가 정상 동작해야 파일이 내려옵니다.
+        window.location.href = '/api/download';
+      });
+
+      // 최초 로드 시 리스트 갱신 시도
+      fetchRecords().catch(()=>{});
+    </script>
+  </body>
+</html>
