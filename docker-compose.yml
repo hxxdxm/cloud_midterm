@@ -3,9 +3,15 @@ services:
     build:
       context: .
       dockerfile: api/Dockerfile
+    container_name: api    
     volumes:
       - ./data:/app/data
     # 필요시 헬스체크 추가
+    healthcheck:                      # ✅ nginx가 준비될 때까지 기다릴 수 있게 추가
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
     expose:
       - "5000"
 

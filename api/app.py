@@ -6,7 +6,7 @@
 # - GET  /api/download  : data.json 파일 다운로드
 
 
-from flask import Flask  
+from flask import Flask, request, jsonify, send_file
 from pathlib import Path
 import json, os
 
@@ -68,10 +68,10 @@ def add_record():
 @app.get("/api/download")
 def download_json():
     try:
-        return send_file(DATA_PATH, as_attachment=True, download_name="records.json")
+        return send_file(DATA_PATH = Path("/app/data/data.json"), as_attachment=True, download_name="records.json")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     # 적절한 포트(예: 5000)로 0.0.0.0 에서 실행
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5000)
